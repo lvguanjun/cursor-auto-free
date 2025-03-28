@@ -1,9 +1,9 @@
-import warnings
 import os
 import platform
 import subprocess
-import time
 import threading
+import time
+import warnings
 
 # Ignore specific SyntaxWarning
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="DrissionPage")

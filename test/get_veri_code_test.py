@@ -1,9 +1,10 @@
-from DrissionPage import ChromiumOptions, Chromium
-from DrissionPage.common import Keys
-import time
+import os
 import re
 import sys
-import os
+import time
+
+from DrissionPage import Chromium, ChromiumOptions
+from DrissionPage.common import Keys
 
 
 def get_extension_path():
