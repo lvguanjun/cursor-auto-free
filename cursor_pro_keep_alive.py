@@ -20,6 +20,8 @@ import random
 import time
 from datetime import datetime
 
+from faker import Faker
+
 from browser_utils import BrowserManager
 from config import Config
 from cursor_auth_manager import CursorAuthManager
@@ -318,44 +320,19 @@ def sign_up_account(browser, tab):
 
 
 class EmailGenerator:
-    def __init__(
-        self,
-        password="".join(
-            random.choices(
-                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*",
-                k=12,
-            )
-        ),
-    ):
+    def __init__(self):
         configInstance = Config()
         configInstance.print_config()
         self.domain = configInstance.get_domain()
-        self.names = self.load_names()
-        self.default_password = password
-        self.default_first_name = self.generate_random_name()
-        self.default_last_name = self.generate_random_name()
-
-    def load_names(self):
-        with open("names-dataset.txt", "r") as file:
-            return file.read().split()
-
-    def generate_random_name(self):
-        """生成随机用户名"""
-        return random.choice(self.names)
-
-    def generate_email(self, length=4):
-        """生成随机邮箱地址"""
-        length = random.randint(0, length)  # 生成0到length之间的随机整数
-        timestamp = str(int(time.time()))[-length:]  # 使用时间戳后length位
-        return f"{self.default_first_name}{timestamp}@{self.domain}"  #
+        self.fake = Faker()
 
     def get_account_info(self):
         """获取完整的账号信息"""
         return {
-            "email": self.generate_email(),
-            "password": self.default_password,
-            "first_name": self.default_first_name,
-            "last_name": self.default_last_name,
+            "email": self.fake.email(domain=self.domain),
+            "password": self.fake.password(),
+            "first_name": self.fake.first_name(),
+            "last_name": self.fake.last_name(),
         }
 
 
@@ -461,10 +438,11 @@ if __name__ == "__main__":
         logging.info("正在生成随机账号信息...")
 
         email_generator = EmailGenerator()
-        first_name = email_generator.default_first_name
-        last_name = email_generator.default_last_name
-        account = email_generator.generate_email()
-        password = email_generator.default_password
+        account_info = email_generator.get_account_info()
+        first_name = account_info["first_name"]
+        last_name = account_info["last_name"]
+        account = account_info["email"]
+        password = account_info["password"]
 
         logging.info(f"生成的邮箱账号: {account}")
 
